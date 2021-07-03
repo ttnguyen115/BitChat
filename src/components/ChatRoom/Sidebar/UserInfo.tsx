@@ -1,31 +1,31 @@
-import { FC, useEffect } from 'react'
-import { Button, Avatar, Typography } from 'antd'
-import styled from 'styled-components'
-import { auth } from '../../../api/firebase'
+import { Avatar, Button, Typography } from 'antd';
+import { FC } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useAppSelector } from './../../../app/hooks';
+import styled from 'styled-components';
+import { auth } from '../../../api/firebase';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { RootState } from '../../../app/store';
+import { logoutUser } from '../../../features/user/userSlice';
 
 const UserInfo: FC = () => {
+    const dispatch = useAppDispatch();
     const history = useHistory();
-    const userData = useAppSelector((state: RootState) => state.user.data);
-
-    useEffect(() => {
-        if (!userData) {
-            history.push('/login');
-        }
-    }, [userData, history])
+    const userInfo = useAppSelector((state: RootState) => state.user.data);
 
     const handleSignout = () => {
         auth.signOut();
+        dispatch(logoutUser());
         history.push('/login');
     }
 
     return (
         <WrapperStyled>
             <div>
-                <Avatar>A</Avatar>
-                <Typography.Text className="username">ABC</Typography.Text>
+                <Avatar src={userInfo!.photoURL}>
+                    { userInfo!.photoURL ? '' : userInfo!.displayName?.charAt(0)?.toUpperCase() }
+                </Avatar>
+                
+                <Typography.Text className="username">{userInfo!.displayName}</Typography.Text>
             </div>
 
             <Button ghost onClick={handleSignout}>Logout</Button>

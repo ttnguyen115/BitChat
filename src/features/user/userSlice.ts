@@ -11,7 +11,7 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setLoading: (state) => {
+        setLoading: (state): userState => {
             return {
                 ...state,
                 loading: true,
@@ -21,16 +21,24 @@ const userSlice = createSlice({
 
         setUser: (state, action: PayloadAction<userData>): userState => {
             return {
-                data: action.payload,
-                loading: false,
-                error: '',
+                ...state,
+                data: {
+                    displayName: action.payload.displayName,
+                    email: action.payload.email,
+                    uid: action.payload.uid,
+                    photoURL: action.payload.photoURL
+                },
             }
+        },
+
+        logoutUser: (state): userState => {
+            return initialState;
         }
     },
     extraReducers: (builder) => {}
 });
 
-export const { setUser, setLoading } = userSlice.actions;
+export const { setUser, setLoading, logoutUser } = userSlice.actions;
 
 export const selectUser = (state: userState) => state.data;
 
